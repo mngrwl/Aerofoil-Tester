@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+frontend/dist/
+frontend/coverage/
+backend/.venv/
+backend/.data/
+backend/.pytest_cache/
+backend/.ruff_cache/
+backend/.basedpyright/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env.local
