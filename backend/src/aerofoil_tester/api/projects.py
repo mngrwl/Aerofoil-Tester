@@ -30,9 +30,18 @@ class MissionResponse(BaseModel):
 def create_project_router(repository: ProjectRepository) -> APIRouter:
     router = APIRouter(prefix="/api/projects", tags=["projects"])
 
+    @router.get("", response_model=list[ProjectResponse])
+    def list_projects() -> list[ProjectResponse]:
+        return [_project_response(project) for project in repository.projects()]
+
     @router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
     def create_project(request: ProjectRequest) -> ProjectResponse:
         return _project_response(repository.create(request.name, request.project_type, request.unit_system))
+
+    @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+    def delete_project(project_id: UUID) -> None:
+        if not repository.delete(project_id):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.")
 
     @router.get("/{project_id}/mission", response_model=MissionResponse)
     def get_mission(project_id: UUID) -> MissionResponse:

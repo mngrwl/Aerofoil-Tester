@@ -2,7 +2,7 @@
 
 An educational web application for defining, evaluating, and improving conceptual wing designs.
 
-The project begins with a three-stage setup: project reference, known mission facts, then review/readiness. Unknown values remain unknown; the app never turns them into silent assumptions.
+The project begins with a three-stage setup: project reference, known mission facts, then review/readiness. It then records a constraint set before any wing candidates are generated. Unknown values remain unknown; the app never turns them into silent assumptions.
 
 ## Technology
 
@@ -47,3 +47,5 @@ backend/src/aerofoil_tester/storage/ SQLite persistence
 backend/src/aerofoil_tester/api/     HTTP request handling
 docs/                     Explanations for students reading the codebase
 ```
+
+Read [the project setup](docs/project-setup.md) and [constraint-set](docs/constraints.md) guides before changing the flow.

@@ -6,6 +6,8 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from aerofoil_tester.api.constraints import create_constraint_router
+from aerofoil_tester.api.initial_values import create_initial_values_router
 from aerofoil_tester.api.projects import create_project_router
 from aerofoil_tester.storage.project_repository import ProjectRepository
 
@@ -25,6 +27,8 @@ def create_app(database_path: Path | None = None) -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(create_project_router(project_repository))
+    app.include_router(create_constraint_router(project_repository))
+    app.include_router(create_initial_values_router(project_repository))
     return app
 
 
