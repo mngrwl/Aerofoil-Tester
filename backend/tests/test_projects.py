@@ -119,3 +119,15 @@ def test_initial_values_calculate_weight_and_keep_assumptions_reviewable(tmp_pat
     assert by_key["weight"]["value"] == 9806.65
     assert by_key["air_density"]["status"] == "provisional"
     assert by_key["span"]["kind"] == "optimizer variable"
+
+
+def test_near_sea_level_scenario_provides_a_provisional_atmosphere(tmp_path: Path) -> None:
+    client = TestClient(create_app(tmp_path / "projects.sqlite3"))
+    project_id = client.post("/api/projects", json={}).json()["id"]
+    _ = client.put(f"/api/projects/{project_id}/mission", json={"altitude_mode": "sea_level"})
+
+    values = client.get(f"/api/projects/{project_id}/initial-values").json()["values"]
+
+    density = next(value for value in values if value["key"] == "air_density")
+    assert density["value"] == 1.225
+    assert density["status"] == "provisional"

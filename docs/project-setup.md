@@ -14,3 +14,7 @@ The project can be saved before mass, speed, payload, or altitude are known. Ope
 The opening screen requests the saved-project list from `GET /api/projects`. Choosing **Continue** requests that selected project's mission with `GET /api/projects/{id}/mission`, then reconstructs the review screen from that stored data. The UUID returned by SQLite remains the canonical project identity for all later saves.
 
 Deleting a project sends `DELETE /api/projects/{id}` only after an explicit confirmation. This permanently removes that project's mission and saved constraint set; it does not affect other projects.
+
+## Mission suggestions
+
+Suggestions are visibly separate from requirements. The current built-in suggestion is the named ISA near-sea-level atmosphere scenario, which a user can apply or replace. Cruise speed and takeoff mass remain unresolved until an approved reference preset or user data is available; aircraft category alone is not a defensible numerical basis. The UI records acceptance of the applied altitude scenario with the mission data.

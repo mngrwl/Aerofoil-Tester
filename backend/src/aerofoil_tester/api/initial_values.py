@@ -48,7 +48,10 @@ def create_initial_values_router(repository: ProjectRepository) -> APIRouter:
 
 
 def _derived(mission: Mission) -> list[InitialValue]:
-    density = _isa_density(mission.altitude_m) if mission.altitude_m is not None else None
+    atmosphere_altitude = (
+        mission.altitude_m if mission.altitude_m is not None else 0.0 if mission.altitude_mode == "sea_level" else None
+    )
+    density = _isa_density(atmosphere_altitude) if atmosphere_altitude is not None else None
     speed = mission.cruise_speed_mps
     values = [
         InitialValue(

@@ -37,6 +37,9 @@ class Mission:
     maximum_takeoff_mass_kg: float | None = None
     minimum_stall_speed_mps: float | None = None
     maximum_root_bending_moment_nm: float | None = None
+    cruise_speed_suggestion_state: str | None = None
+    altitude_suggestion_state: str | None = None
+    mass_suggestion_state: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,7 +58,7 @@ def readiness(mission: Mission) -> dict[str, AnalysisReadiness]:
         missing_for_lift.append("takeoff mass")
     if mission.cruise_speed_mps is None and (mission.speed_min_mps is None or mission.speed_max_mps is None):
         missing_for_lift.append("operating speed")
-    if mission.altitude_m is None:
+    if mission.altitude_m is None and mission.altitude_mode != "sea_level":
         missing_for_lift.append("altitude or an atmospheric assumption")
     speed_known = mission.cruise_speed_mps is not None or (
         mission.speed_min_mps is not None and mission.speed_max_mps is not None
@@ -63,7 +66,9 @@ def readiness(mission: Mission) -> dict[str, AnalysisReadiness]:
     lift_available = [
         "takeoff mass" if mission.takeoff_mass_kg is not None else "",
         "operating speed" if speed_known else "",
-        "altitude" if mission.altitude_m is not None else "",
+        "altitude or ISA near-sea-level scenario"
+        if mission.altitude_m is not None or mission.altitude_mode == "sea_level"
+        else "",
     ]
     return {
         "2D airfoil analysis": AnalysisReadiness(
