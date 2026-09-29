@@ -1,0 +1,2 @@
+1. This is an educational codebase, i.e. assume that a beginner student (who knows very little about aviation etc) has to learn the codebase in depth by only reading the code comments and documentation. After every change, the documentation and comments must be reviewed to make sure the whole thing is easy for a student to learn.
+2. Create reusable libraries, components and blocks as much as possible, so that the student doesn't get lost in the codebase.
