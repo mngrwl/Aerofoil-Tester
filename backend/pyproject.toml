@@ -38,6 +38,6 @@ typeCheckingMode = "all"
 reportMissingTypeStubs = "warning"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["src", "tests"]
 addopts = ["-ra", "--strict-markers", "--strict-config"]
 filterwarnings = ["error"]

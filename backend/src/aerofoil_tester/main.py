@@ -6,15 +6,15 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from aerofoil_tester.api.design_briefs import create_router
-from aerofoil_tester.storage.design_brief_repository import DesignBriefRepository
+from aerofoil_tester.api.projects import create_project_router
+from aerofoil_tester.storage.project_repository import ProjectRepository
 
 
-def create_app(database_path: Path | None = None, imported_meshes_path: Path | None = None) -> FastAPI:
+def create_app(database_path: Path | None = None) -> FastAPI:
     """Create an API with paths injectable for tests and fixed locally for normal use."""
     data_path = Path(os.environ.get("AEROFOIL_DATA_PATH", ".data"))
-    repository = DesignBriefRepository(database_path or data_path / "aerofoil_tester.sqlite3")
-    repository.initialize()
+    project_repository = ProjectRepository(database_path or data_path / "aerofoil_tester.sqlite3")
+    project_repository.initialize()
 
     app = FastAPI(title="Aerofoil Tester API")
     app.add_middleware(
@@ -24,7 +24,7 @@ def create_app(database_path: Path | None = None, imported_meshes_path: Path | N
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.include_router(create_router(repository, imported_meshes_path or data_path / "imported_meshes"))
+    app.include_router(create_project_router(project_repository))
     return app
 
 

@@ -2,7 +2,7 @@
 
 An educational web application for defining, evaluating, and improving conceptual wing designs.
 
-The project starts with a small, reliable workflow: create a new design from scratch or import a supported mesh. Later screens will collect the mission brief, define operating conditions, run preliminary analyses, and compare candidates.
+The project begins with a three-stage setup: project reference, known mission facts, then review/readiness. Unknown values remain unknown; the app never turns them into silent assumptions.
 
 ## Technology
 
@@ -17,7 +17,7 @@ Open two terminals from the repository root.
 ```sh
 cd backend
 uv sync --all-extras
-uv run uvicorn aerofoil_tester.main:app --reload --port 8000
+uv run uvicorn aerofoil_tester.main:app --reload --port 3000
 ```
 
 ```sh
