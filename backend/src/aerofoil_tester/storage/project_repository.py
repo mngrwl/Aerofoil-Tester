@@ -45,6 +45,21 @@ class ProjectRepository:
                     project_id TEXT PRIMARY KEY, values_json TEXT NOT NULL
                 )"""
             )
+            _ = connection.execute(
+                """CREATE TABLE IF NOT EXISTS project_optimization (
+                    project_id TEXT PRIMARY KEY, objective_json TEXT NOT NULL
+                )"""
+            )
+            _ = connection.execute(
+                """CREATE TABLE IF NOT EXISTS project_primary_operating_point (
+                    project_id TEXT PRIMARY KEY, point_json TEXT NOT NULL
+                )"""
+            )
+            _ = connection.execute(
+                """CREATE TABLE IF NOT EXISTS project_operating_points (
+                    project_id TEXT PRIMARY KEY, points_json TEXT NOT NULL
+                )"""
+            )
 
     def create(self, name: str | None, project_type: str, unit_system: str) -> Project:
         project_name = name.strip() if name is not None else ""
@@ -138,6 +153,69 @@ class ProjectRepository:
                 """INSERT INTO project_initial_values (project_id, values_json) VALUES (?, ?)
                 ON CONFLICT(project_id) DO UPDATE SET values_json = excluded.values_json""",
                 (str(project_id), json.dumps(values)),
+            )
+        return True
+
+    def optimization(self, project_id: UUID) -> dict[str, object] | None:
+        with self._connection() as connection:
+            row: sqlite3.Row | None = cast(
+                sqlite3.Row | None,
+                connection.execute(
+                    "SELECT objective_json FROM project_optimization WHERE project_id = ?", (str(project_id),)
+                ).fetchone(),
+            )
+        return cast(dict[str, object], json.loads(cast(str, row["objective_json"]))) if row else None
+
+    def save_optimization(self, project_id: UUID, objective: dict[str, object]) -> bool:
+        if self.mission(project_id) is None:
+            return False
+        with self._connection() as connection:
+            _ = connection.execute(
+                """INSERT INTO project_optimization (project_id, objective_json) VALUES (?, ?)
+                ON CONFLICT(project_id) DO UPDATE SET objective_json = excluded.objective_json""",
+                (str(project_id), json.dumps(objective)),
+            )
+        return True
+
+    def primary_operating_point(self, project_id: UUID) -> dict[str, object] | None:
+        with self._connection() as connection:
+            row: sqlite3.Row | None = cast(
+                sqlite3.Row | None,
+                connection.execute(
+                    "SELECT point_json FROM project_primary_operating_point WHERE project_id = ?", (str(project_id),)
+                ).fetchone(),
+            )
+        return cast(dict[str, object], json.loads(cast(str, row["point_json"]))) if row else None
+
+    def save_primary_operating_point(self, project_id: UUID, point: dict[str, object]) -> bool:
+        if self.mission(project_id) is None:
+            return False
+        with self._connection() as connection:
+            _ = connection.execute(
+                """INSERT INTO project_primary_operating_point (project_id, point_json) VALUES (?, ?)
+                ON CONFLICT(project_id) DO UPDATE SET point_json = excluded.point_json""",
+                (str(project_id), json.dumps(point)),
+            )
+        return True
+
+    def operating_points(self, project_id: UUID) -> list[dict[str, object]] | None:
+        with self._connection() as connection:
+            row: sqlite3.Row | None = cast(
+                sqlite3.Row | None,
+                connection.execute(
+                    "SELECT points_json FROM project_operating_points WHERE project_id = ?", (str(project_id),)
+                ).fetchone(),
+            )
+        return cast(list[dict[str, object]], json.loads(cast(str, row["points_json"]))) if row else None
+
+    def save_operating_points(self, project_id: UUID, points: list[dict[str, object]]) -> bool:
+        if self.mission(project_id) is None:
+            return False
+        with self._connection() as connection:
+            _ = connection.execute(
+                """INSERT INTO project_operating_points (project_id, points_json) VALUES (?, ?)
+                ON CONFLICT(project_id) DO UPDATE SET points_json = excluded.points_json""",
+                (str(project_id), json.dumps(points)),
             )
         return True
 

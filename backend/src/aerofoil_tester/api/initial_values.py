@@ -53,6 +53,11 @@ def _derived(mission: Mission) -> list[InitialValue]:
     )
     density = _isa_density(atmosphere_altitude) if atmosphere_altitude is not None else None
     speed = mission.cruise_speed_mps
+    dynamic_pressure_origin = (
+        "q = 0.5 * density * speed^2"
+        if speed is not None
+        else "A single dynamic pressure needs one named operating point; a speed range is an envelope, not a point."
+    )
     values = [
         InitialValue(
             key="weight",
@@ -81,19 +86,9 @@ def _derived(mission: Mission) -> list[InitialValue]:
             value=0.5 * density * speed**2 if density is not None and speed is not None else None,
             unit="Pa",
             kind="calculated",
-            origin="q = 0.5 * density * speed^2",
-            dependencies=["air density", "cruise speed"],
+            origin=dynamic_pressure_origin,
+            dependencies=["air density", "one selected operating-point speed"],
             status="ready" if density is not None and speed is not None else "missing",
-        ),
-        InitialValue(
-            key="propulsion_efficiency",
-            label="Propulsion efficiency",
-            unit="1",
-            kind="assumed",
-            origin="No propulsion configuration selected",
-            dependencies=["propulsion configuration"],
-            status="missing",
-            high_impact=True,
         ),
     ]
     values.extend(

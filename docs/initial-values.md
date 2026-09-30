@@ -7,3 +7,5 @@ This screen sits after constraints and before design-space setup. It distinguish
 - **Optimizer variables** are not given a single design value. Span, taper, sweep, and twist remain unset until the engineer defines their search bounds in the future design-space step.
 
 The backend derives only values with their necessary inputs. Its ISA density formula applies in the troposphere (0–11 km); outside that range it reports a missing value rather than extrapolating. Saved edits and accepted assumptions are stored per project.
+
+Dynamic pressure is a value at one speed and density. A mission speed range is an envelope, not a set of named operating points, so the application does not collapse it to an arbitrary midpoint. Propulsion efficiency is intentionally absent: it is not needed for the current 2D L/D screening workflow.

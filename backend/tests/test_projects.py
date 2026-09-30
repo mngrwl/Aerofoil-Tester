@@ -131,3 +131,18 @@ def test_near_sea_level_scenario_provides_a_provisional_atmosphere(tmp_path: Pat
     density = next(value for value in values if value["key"] == "air_density")
     assert density["value"] == 1.225
     assert density["status"] == "provisional"
+
+
+def test_dynamic_pressure_does_not_collapse_a_speed_range_to_one_point(tmp_path: Path) -> None:
+    client = TestClient(create_app(tmp_path / "projects.sqlite3"))
+    project_id = client.post("/api/projects", json={}).json()["id"]
+    _ = client.put(
+        f"/api/projects/{project_id}/mission",
+        json={"altitude_mode": "sea_level", "speed_mode": "range", "speed_min_mps": 30, "speed_max_mps": 60},
+    )
+
+    values = client.get(f"/api/projects/{project_id}/initial-values").json()["values"]
+
+    dynamic_pressure = next(value for value in values if value["key"] == "dynamic_pressure")
+    assert dynamic_pressure["status"] == "missing"
+    assert "operating point" in dynamic_pressure["origin"]

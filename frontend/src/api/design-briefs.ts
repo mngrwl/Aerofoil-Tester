@@ -42,6 +42,7 @@ export interface Constraint { id: string; category: string; name: string; operat
 export interface ConstraintSet { constraints: Constraint[]; checks: string[]; }
 export interface InitialValue { key: string; label: string; value: number | null; unit: string | null; kind: 'calculated' | 'assumed' | 'user-supplied' | 'optimizer variable'; origin: string; dependencies: string[]; status: 'ready' | 'provisional' | 'missing' | 'conflicting'; accepted: boolean; high_impact: boolean; }
 export interface InitialValueSet { values: InitialValue[]; }
+export interface OperatingPoint { id: string; name: string; speed_mps: number | null; altitude_m: number | null; mass_kg: number | null; applicability: string; primary: boolean; source: string; status: 'ready' | 'incomplete'; confirmed: boolean; }
 
 async function request(path: string, init?: RequestInit): Promise<DesignBrief> {
   const response = await fetch(`${apiBaseUrl}${path}`, init);
@@ -119,3 +120,5 @@ export function loadConstraints(projectId: string): Promise<ConstraintSet> { ret
 export function saveConstraints(projectId: string, constraintSet: ConstraintSet): Promise<ConstraintSet> { return projectRequest(`/api/projects/${projectId}/constraints`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(constraintSet) }); }
 export function loadInitialValues(projectId: string): Promise<InitialValueSet> { return projectRequest(`/api/projects/${projectId}/initial-values`); }
 export function saveInitialValues(projectId: string, initialValues: InitialValueSet): Promise<InitialValueSet> { return projectRequest(`/api/projects/${projectId}/initial-values`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(initialValues) }); }
+export function loadPrimaryOperatingPoint(projectId: string): Promise<OperatingPoint> { return projectRequest(`/api/projects/${projectId}/primary-operating-point`); }
+export function savePrimaryOperatingPoint(projectId: string, point: OperatingPoint): Promise<OperatingPoint> { return projectRequest(`/api/projects/${projectId}/primary-operating-point`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(point) }); }
